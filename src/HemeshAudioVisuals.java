@@ -3,6 +3,7 @@ import oscP5.OscMessage;
 import oscP5.OscP5;
 import peasy.PeasyCam;
 import processing.core.PApplet;
+import processing.opengl.PShader;
 import wblut.geom.WB_Line;
 import wblut.hemesh.*;
 import wblut.processing.WB_Render;
@@ -14,8 +15,11 @@ public class HemeshAudioVisuals extends PApplet {
     WB_Line wb_Line;
     HE_Mesh he_Mesh;
     WB_Render wb_Render;
+    PShader monjori;
+    PShader toon;
 
     //region Fields
+    boolean shaderEnabled = true;
     int view;
     int archimedesType, he_MeshType;
     float px, py, pz, vx, vy, vz;
@@ -80,17 +84,33 @@ public class HemeshAudioVisuals extends PApplet {
         view = 1;
         archimedesType = 1;
         wb_Render = new WB_Render(this);
+        monjori = new PShader();
+        monjori = loadShader("monjori.glsl");
+        monjori.set("resolution", width, height);
+        monjori.set("time", millis() / 1000);
+        toon = loadShader("ToonFrag.glsl", "ToonVert.glsl");
+        //shader(toon);
     }
 
     public void draw() {
+        if (shaderEnabled) {
+            shader(toon);
+        }
+
         background(0);
-        lights();
-        stroke(255, 0, 0, strokeAlpha);
+        //lights();
+
+        float dirY = (mouseY / (float) height - 0.5f) * 2;
+        float dirX = (mouseX / (float) width - 0.5f) * 2;
+        directionalLight(204, 204, 204, -dirX, -dirY, -1);
+
+        //stroke(255, 0, 0, strokeAlpha);
         fill(0, 200, 200, fillAlpha);
         createMesh();
         createModifiers();
         createDividers();
         renderMesh();
+
     }
 
     static public void main(String[] passedArgs) { // It is required
@@ -323,4 +343,14 @@ public class HemeshAudioVisuals extends PApplet {
         }
     }
     //endregion
+
+    public void mousePressed() {
+        if (shaderEnabled) {
+            shaderEnabled = false;
+            resetShader();
+        }
+        else {
+            shaderEnabled = true;
+        }
+    }
 }

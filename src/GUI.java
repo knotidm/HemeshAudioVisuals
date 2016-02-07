@@ -26,8 +26,8 @@ public class GUI extends PApplet {
         controlP5.addSlider("size").setPosition(40, 40).setSize(200, 20).setRange(100, 300).setValue(100).setColorCaptionLabel(color(20,20,20));
         controlP5.addSlider("extrudeDistance").setPosition(40, 60).setSize(200, 20).setRange(0, 100).setValue(0).setColorCaptionLabel(color(20,20,20));
         controlP5.addSlider("vertexExpandDistance").setPosition(40, 80).setSize(200, 20).setRange(0, 100).setValue(0).setColorCaptionLabel(color(20,20,20));
-        controlP5.addSlider("chamferCornersDistance").setPosition(40, 100).setSize(200, 20).setRange(0, 100).setValue(0).setColorCaptionLabel(color(20,20,20));
-        controlP5.addSlider("chamferEdgesDistance").setPosition(40, 120).setSize(200, 20).setRange(0, 100).setValue(0).setColorCaptionLabel(color(20,20,20));
+        controlP5.addSlider("chamferCornersDistance").setPosition(40, 100).setSize(200, 20).setRange(0, 30).setValue(0).setColorCaptionLabel(color(20,20,20));
+        controlP5.addSlider("chamferEdgesDistance").setPosition(40, 120).setSize(200, 20).setRange(0, 19).setValue(0).setColorCaptionLabel(color(20,20,20));
         controlP5.addSlider("wireFrameFacets").setPosition(40, 140).setSize(200, 20).setRange(2, 10).setValue(2).setColorCaptionLabel(color(20,20,20));
         controlP5.addSlider("wireFrameOffset").setPosition(40, 160).setSize(200, 20).setRange(0, 100).setValue(0).setColorCaptionLabel(color(20,20,20));
         controlP5.addSlider("smoothIterations").setPosition(40, 180).setSize(200, 20).setRange(0, 10).setValue(0).setColorCaptionLabel(color(20,20,20));
