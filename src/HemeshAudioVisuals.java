@@ -22,11 +22,10 @@ public class HemeshAudioVisuals extends PApplet {
     PShader monjori;
     PShader toon;
     PShape pShape;
-    PImage pimage;
+    PImage pImage;
     PShader texlightShader;
 
     //region Fields
-    boolean shaderEnabled = true;
     int view;
     int archimedesType, he_MeshType;
     float px, py, pz, vx, vy, vz;
@@ -95,10 +94,10 @@ public class HemeshAudioVisuals extends PApplet {
         monjori = loadShader("monjori.glsl");
         monjori.set("resolution", width, height);
         monjori.set("time", millis() / 1000.0f);
-        toon = loadShader("ToonFrag.glsl", "ToonVert.glsl");
-        pimage = loadImage("data/lachoy.jpg");
+        //toon = loadShader("ToonFrag.glsl", "ToonVert.glsl");
+        pImage = loadImage("data/lachoy.jpg");
         //shader(toon);
-        texlightShader = loadShader("texlightfrag.glsl", "texlightvert.glsl");
+        //texlightShader = loadShader("texlightfrag.glsl", "texlightvert.glsl");
     }
 
     public void draw() {
@@ -118,10 +117,7 @@ public class HemeshAudioVisuals extends PApplet {
 
         pShape = createPShapeFromHemesh(he_Mesh, false);
         shape(pShape);
-
-        if (shaderEnabled) {
-            shader(texlightShader);
-        }
+        //shader(toon);
     }
 
     static public void main(String[] passedArgs) { // It is required
@@ -344,15 +340,6 @@ public class HemeshAudioVisuals extends PApplet {
     }
     //endregion
 
-    public void mousePressed() {
-        if (shaderEnabled) {
-            shaderEnabled = false;
-            resetShader();
-        } else {
-            shaderEnabled = true;
-        }
-    }
-
     public PShape createPShapeFromHemesh(HE_Mesh he_Mesh, boolean perVertexNormals) {
         he_Mesh.triangulate();
         int[][] facesHemesh = he_Mesh.getFacesAsInt();
@@ -364,12 +351,9 @@ public class HemeshAudioVisuals extends PApplet {
             vertexNormals = he_Mesh.getVertexNormals();
         }
 
-        textureMode(NORMAL);
         PShape pShape = createShape();
         pShape.beginShape(TRIANGLES);
-        pShape.texture(pimage);
-        pShape.stroke(0, 125);
-        pShape.strokeWeight(0.5f);
+
         for (int i = 0; i < facesHemesh.length; i++) {
             if (!perVertexNormals) {
                 normal = faceArray[i].getFaceNormal();
@@ -386,17 +370,17 @@ public class HemeshAudioVisuals extends PApplet {
             }
         }
         pShape.endShape();
-        addTextureUV(pShape, pimage);
+        addTextureUV(pShape, pImage);
         return pShape;
     }
 
-    void addTextureUV(PShape s, PImage img) {
-        s.setStroke(false);
-        s.setTexture(img);
-        s.setTextureMode(NORMAL);
-        for (int i = 0; i < s.getVertexCount (); i++) {
-            PVector v = s.getVertex(i);
-            s.setTextureUV(i, map(v.x, 0, width, 0, 1), map(v.y, 0, height, 0, 1));
+    void addTextureUV(PShape pShape, PImage pImage) {
+        pShape.setStroke(false);
+        pShape.setTexture(pImage);
+        pShape.setTextureMode(NORMAL);
+        for (int i = 0; i < pShape.getVertexCount (); i++) {
+            PVector v = pShape.getVertex(i);
+            pShape.setTextureUV(i, map(v.x, 0, width, 0, 1), map(v.y, 0, height, 0, 1));
         }
     }
 }
