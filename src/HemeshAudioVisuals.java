@@ -19,11 +19,11 @@ public class HemeshAudioVisuals extends PApplet {
     WB_Line wb_Line;
     HE_Mesh he_Mesh;
     WB_Render wb_Render;
-    PShader monjori;
+
     PShader toon;
     PShape pShape;
     PImage pImage;
-    PShader texlightShader;
+    PShader matCapShader;
 
     //region Fields
     int view;
@@ -90,19 +90,16 @@ public class HemeshAudioVisuals extends PApplet {
         view = 1;
         archimedesType = 1;
         wb_Render = new WB_Render(this);
-        monjori = new PShader();
-        monjori = loadShader("monjori.glsl");
-        monjori.set("resolution", width, height);
-        monjori.set("time", millis() / 1000.0f);
+        
         //toon = loadShader("ToonFrag.glsl", "ToonVert.glsl");
-        pImage = loadImage("data/lachoy.jpg");
+        pImage = loadImage("data/MatCap/matcap2.jpg");
         //shader(toon);
-        //texlightShader = loadShader("texlightfrag.glsl", "texlightvert.glsl");
+        matCapShader = loadShader("matCap_fragment.glsl", "matCap_vertex.glsl");
     }
 
     public void draw() {
         background(0);
-        //lights();
+        lights();
 
         float dirY = (mouseY / (float) height - 0.5f) * 2;
         float dirX = (mouseX / (float) width - 0.5f) * 2;
@@ -117,7 +114,7 @@ public class HemeshAudioVisuals extends PApplet {
 
         pShape = createPShapeFromHemesh(he_Mesh, false);
         shape(pShape);
-        //shader(toon);
+        shader(matCapShader);
     }
 
     static public void main(String[] passedArgs) { // It is required
@@ -149,7 +146,7 @@ public class HemeshAudioVisuals extends PApplet {
                 .setEdge(size);
 
         HEC_Sphere hec_Sphere = new HEC_Sphere()
-                .setRadius(50)
+                .setRadius(size)
                 .setUFacets(8)
                 .setVFacets(8);
 
@@ -268,11 +265,11 @@ public class HemeshAudioVisuals extends PApplet {
     public void renderMesh() {
         switch (view) {
             case 1:
-                wb_Render.drawFaces(he_Mesh);
+                wb_Render.drawFaces(he_Mesh, pImage);
                 break;
             case 2:
                 noStroke();
-                wb_Render.drawFacesSmooth(he_Mesh);
+                wb_Render.drawFacesSmooth(he_Mesh, pImage);
                 break;
             case 3:
                 stroke(255, 0, 0);
@@ -281,7 +278,7 @@ public class HemeshAudioVisuals extends PApplet {
                 break;
             case 4:
                 stroke(0, 255, 0);
-                wb_Render.drawFaces(he_Mesh);
+                wb_Render.drawFaces(he_Mesh, pImage);
                 wb_Render.drawFaceNormals(20, he_Mesh);
                 break;
             case 5:
@@ -291,7 +288,7 @@ public class HemeshAudioVisuals extends PApplet {
             case 6:
                 stroke(0, 255, 0);
                 fill(255, 0, 0);
-                wb_Render.drawFaces(he_Mesh);
+                wb_Render.drawFaces(he_Mesh, pImage);
                 wb_Render.drawVertexNormals(30, he_Mesh);
         }
     }
@@ -342,10 +339,10 @@ public class HemeshAudioVisuals extends PApplet {
 
     public PShape createPShapeFromHemesh(HE_Mesh he_Mesh, boolean perVertexNormals) {
         he_Mesh.triangulate();
-        int[][] facesHemesh = he_Mesh.getFacesAsInt();
-        float[][] verticesHemesh = he_Mesh.getVerticesAsFloat();
-        HE_Face[] faceArray = he_Mesh.getFacesAsArray();
-        WB_Coord normal = null;
+        int[][] facesAsInt = he_Mesh.getFacesAsInt();
+        float[][] verticesAsFloat = he_Mesh.getVerticesAsFloat();
+        HE_Face[] facesAsArray = he_Mesh.getFacesAsArray();
+        WB_Coord faceNormal = null;
         WB_Coord[] vertexNormals = null;
         if (perVertexNormals) {
             vertexNormals = he_Mesh.getVertexNormals();
@@ -354,18 +351,21 @@ public class HemeshAudioVisuals extends PApplet {
         PShape pShape = createShape();
         pShape.beginShape(TRIANGLES);
 
-        for (int i = 0; i < facesHemesh.length; i++) {
+        for (int i = 0; i < facesAsInt.length; i++) {
+
             if (!perVertexNormals) {
-                normal = faceArray[i].getFaceNormal();
+                faceNormal = facesAsArray[i].getFaceNormal();
             }
-            pShape.fill(faceArray[i].getLabel());
+
+            pShape.fill(facesAsArray[i].getLabel());
+
             for (int j = 0; j < 3; j++) {
-                int index = facesHemesh[i][j];
-                float[] vertexHemesh = verticesHemesh[index];
+                int index = facesAsInt[i][j];
+                float[] vertexHemesh = verticesAsFloat[index];
                 if (perVertexNormals) {
-                    normal = vertexNormals[index];
+                    faceNormal = vertexNormals[index];
                 }
-                pShape.normal(normal.xf(), normal.yf(), normal.zf());
+                pShape.normal(faceNormal.xf(), faceNormal.yf(), faceNormal.zf());
                 pShape.vertex(vertexHemesh[0], vertexHemesh[1], vertexHemesh[2]);
             }
         }
