@@ -90,9 +90,9 @@ public class HemeshAudioVisuals extends PApplet {
         view = 1;
         archimedesType = 1;
         wb_Render = new WB_Render(this);
-        
+
         //toon = loadShader("ToonFrag.glsl", "ToonVert.glsl");
-        pImage = loadImage("data/MatCap/matcap2.jpg");
+        pImage = loadImage("data/MatCap/matcap3.jpg");
         //shader(toon);
         matCapShader = loadShader("matCap_fragment.glsl", "matCap_vertex.glsl");
     }
