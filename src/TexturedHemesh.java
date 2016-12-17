@@ -24,19 +24,7 @@ class TexturedHemesh {
 
     Integer view, he_MeshType, archimedesType, size;
 
-//    float px, py, pz, vx, vy, vz;
-
-//    int wireFrameFacets, smoothIterations, soapFilmIterations;
     private final float wireFrameRadius = 200;
-//    float extrudeDistance,
-//            vertexExpandDistance,
-//            chamferCornersDistance,
-//            chamferEdgesDistance,
-//            wireFrameOffset,
-//            strokeAlpha = 255,
-//            fillAlpha = 255,
-//            twistAngleFactor,
-//            noiseDistance = 10;
 
     TexturedHemesh(PApplet pApplet, String imagePath, Integer size) {
         this.pApplet = pApplet;
@@ -51,10 +39,9 @@ class TexturedHemesh {
         this.pShape = createPShapeFromHemesh(he_Mesh, pImage, false);
     }
 
-    //region Mesh Manipulations
     HE_Mesh setHemeshType() {
         HEC_Archimedes hec_Archimedes = new HEC_Archimedes()
-                .setType(archimedesType) //13 typ\u00f3w
+                .setType(archimedesType)
                 .setEdge(size);
 
         HEC_Tetrahedron hec_Tetrahedron = new HEC_Tetrahedron()
@@ -113,28 +100,28 @@ class TexturedHemesh {
         return null;
     }
 
-    public void modify(UserInterface userInterface) {
+    void modify(Float extrudeDistance, Float vertexExpandDistance, Float chamferCornersDistance, Float chamferEdgesDistance) {
         HEM_Extrude hem_Extrude = new HEM_Extrude()
-                .setDistance(userInterface.extrudeDistance.getValue());
+                .setDistance(extrudeDistance);
         he_Mesh.modify(hem_Extrude);
 
         HEM_VertexExpand hem_VertexExpand = new HEM_VertexExpand()
-                .setDistance(userInterface.vertexExpandDistance.getValue());
+                .setDistance(vertexExpandDistance);
         he_Mesh.modify(hem_VertexExpand);
 
         HEM_ChamferCorners hem_ChamferCorners = new HEM_ChamferCorners()
-                .setDistance(userInterface.chamferCornersDistance.getValue());
+                .setDistance(chamferCornersDistance);
         he_Mesh.modify(hem_ChamferCorners);
 
         HEM_ChamferEdges hem_ChamferEdges = new HEM_ChamferEdges()
-                .setDistance(userInterface.chamferEdgesDistance.getValue());
+                .setDistance(chamferEdgesDistance);
         he_Mesh.modify(hem_ChamferEdges);
-
-        HEM_Wireframe hem_Wireframe = new HEM_Wireframe()
-                .setStrutRadius(wireFrameRadius)
-                .setStrutFacets((int) userInterface.wireFrameFacets.getValue())
-                .setMaximumStrutOffset(userInterface.wireFrameOffset.getValue());
-        he_Mesh.modify(hem_Wireframe);
+//
+//        HEM_Wireframe hem_Wireframe = new HEM_Wireframe()
+//                .setStrutRadius(wireFrameRadius)
+//                .setStrutFacets(userInterface.wireFrameFacets.intValue())
+//                .setMaximumStrutOffset(userInterface.wireFrameOffset);
+//        he_Mesh.modify(hem_Wireframe);
 
 //        HEM_Lattice hem_Lattice = new HEM_Lattice()
 //                .setDepth(latticeDepth);
@@ -186,7 +173,7 @@ class TexturedHemesh {
         //        he_Mesh.subdivide(hes_DooSabin, 1);
     }
 
-    public void renderMesh() {
+    void renderMesh() {
         switch (view) {
             case 1:
                 wb_Render.drawFaces(he_Mesh, pImage);
@@ -216,7 +203,6 @@ class TexturedHemesh {
                 wb_Render.drawVertexNormals(30, he_Mesh);
         }
     }
-    //endregion
 
     PShape createPShapeFromHemesh(HE_Mesh he_Mesh, PImage pImage, boolean perVertexNormals) {
         he_Mesh.triangulate();
